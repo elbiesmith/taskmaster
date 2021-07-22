@@ -6,7 +6,7 @@ let tasks = JSON.parse(localStorage.getItem('taskArray')) || [];
 //     title: 'string',
 //     taskDate: 'date String or date object',
 //     taskCompleted: bool,
-//     overdue: bool
+//     overdue: bool (maybe just check against current date when filtering)
 // }
 
 function createTask() {
