@@ -84,11 +84,18 @@ function display() {
     // defaults to all
     for (let i = 0; i < workingData.length; i++) {
         let taskRow = document.importNode(template.content, true);
-        taskRow.getElementById('task').innerHTML = workingData[i].title;
-        taskRow.getElementById('created').innerHTML = workingData[i].created;
-        taskRow.getElementById('dueDate').innerHTML = workingData[i].taskDate;
-        taskRow.getElementById('buttons').innerHTML = workingData[i].buttonCell;
-
+        if (workingData[i].completed) {
+            taskRow.getElementById('task').innerHTML = `<span class="text-decoration-line-through">${workingData[i].title}</span>`;
+            taskRow.getElementById('created').innerHTML = `<span class="text-decoration-line-through">${workingData[i].created}</span>`;
+            taskRow.getElementById('dueDate').innerHTML = `<span class="text-decoration-line-through">${workingData[i].taskDate}</span>`;
+            taskRow.getElementById('buttons').innerHTML = `<span>${workingData[i].buttonCell}</span>`;
+        } else {
+            
+            taskRow.getElementById('task').innerHTML = `<span class="text-decoration-none">${workingData[i].title}</span>`;
+            taskRow.getElementById('created').innerHTML = `<span class="text-decoration-none">${workingData[i].created}</span>`;
+            taskRow.getElementById('dueDate').innerHTML = `<span class="text-decoration-lnone">${workingData[i].taskDate}</span>`;
+            taskRow.getElementById('buttons').innerHTML = `<span >${workingData[i].buttonCell}</span>`;
+        }
         taskBody.appendChild(taskRow);
     }
 
@@ -98,8 +105,16 @@ function markCompleted(element) {
     let elementId = parseInt(element.getAttribute('data-string'))
     // get this object from button
     // flip taskCompleted bool
-    // change style to strikeout
+    if (tasks[elementId].completed == true) {
+        tasks[elementId].completed = false;
+    } else {
+        tasks[elementId].completed = true;
+    }
     
+    localStorage.setItem('taskArray', JSON.stringify(tasks));
+    // change style to strikeout
+    // added to display
+    display();
 }
 
 function editTask() {
@@ -121,7 +136,7 @@ function deleteTask(element) {
     tasks.splice(elementId, 1);
 
     // reset task indexes
-    for(let i = elementId; i < tasks.length; i++){
+    for (let i = elementId; i < tasks.length; i++) {
         tasks[i].buttonCell = `<a id="${i}" onclick="markCompleted(this)" data-string="${i}"><span class="text-primary"><i class="fas fa-check-square"></i></span></a>&nbsp; 
         <i class="fas fa-edit"></i>&nbsp;
         <a id="${i}" onclick="deleteTask(this)" data-string="${i}"><span class="text-danger"><i class="fas fa-trash-alt"></span></i></button>
