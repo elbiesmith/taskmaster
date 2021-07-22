@@ -49,46 +49,41 @@
     <main class="flex-shrink-0">
         <div class="container">
             <div class="row">
-
-                <div class="col border-end border-2 p-4">
-                    <div class="row row-sizer">
-                        <h3>C-Note App</h3>
-                        <p>
-                            Count money one loop at a time. A javascript coding exercise using loops. Write a program
-                            the
-                            displays the numbers from 0 to 100. Display the even numbers in <strong>BOLD</strong>.
-                        </p>
-                    </div>
-                    <div class="row">
-                        <h5 class="border-bottom border-2">Instructions</h5>
-                        <p>Enter a starting value and a ending value. Press the button and the values will appear.</p>
-                    </div>
+                <div class="col">
+                    <h3 class="text-end">search area</h3>
                 </div>
-                <div class="col p-4">
-                    <div class="row row-sizer pb-5">
-                        <h5>Enter Values</h5>
-                        <div class="col">
-                            <input type="number" class="form-control" id="startValue" placeholder="Start Value" value=0>
-                            <button id="submitBtn" class="btn btn-grn mt-1">Submit</button>
-                        </div>
-                        <div class="col">
-                            <input type="number" class="form-control" id="endValue" placeholder="End Value" value=100>
-
-
-                        </div>
-                    </div>
-                    <div class="row">
-                        <h5 class="border-bottom border-2">Results</h5>
-                        <table class="table table-striped">
-                            <tbody id='output' class="table-text-size">
-
-                            </tbody>
-
-                        </table>
-                    </div>
-                </div>
+                <hr>
+            </div>
+            <div class="row">
+            <div class="col-2 border-end"> 
+                <p>Create Task</p>
+                <p>Clear Tasks</p>
+                <p>Filter Tasks</p>
 
             </div>
+            <div class="col-10">Task Master
+                <div class="row">
+                    <div class="col">
+                        <button class="btn btn-primary">create task</button>
+                    </div>
+                    <div class="col">
+                        <button class="btn btn-primary">clear tasks</button>
+                    </div>
+                    <div class="col">
+                        <button class="btn btn-primary">clear filter</button>
+                    </div>
+                </div>
+                <div class="row">
+                    <table class="table table-striped">
+                        <thead class="table-dark">
+                            <th>Title</th>
+                            <th>Created</th>
+                            <th>Due Date</th>
+                        </thead>
+                    </table>
+                </div>
+            </div>
+        </div>
         </div>
     </main>
     <footer class="footer mt-auto py-3 bg-dark sticky-footer">
