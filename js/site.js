@@ -144,6 +144,7 @@ function updateTask(){
     let task = taskField.value;
     let createdDate = new Date().toLocaleDateString();
     let date = new Date().toLocaleDateString();
+    let completed = tasks[editIdNumber].completed;
 
     let date2 = `${dateField.value} 00:00`
 
@@ -164,7 +165,7 @@ function updateTask(){
             id: tasks.length,
             taskDate: date,
             created: createdDate,
-            completed: false,
+            completed: completed,
             buttonCell: `<button class='btn' onclick="markCompleted(this)" data-string="${editIdNumber}"><span class="text-primary"><i class="fas fa-check-square"></i></span></button>&nbsp; 
             <button class="btn" onclick="editTask(this)" data-string="${editIdNumber}"><i class="fas fa-edit"></i></button>&nbsp;
             <button class='btn'  onclick="deleteTask(this)" data-string="${editIdNumber}"><span class="text-danger"><i class="fas fa-trash-alt"></span></i></button>
