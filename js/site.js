@@ -1,6 +1,6 @@
 // create working task list
 let tasks = JSON.parse(localStorage.getItem('taskArray')) || [];
-let editIDNumber = 0;
+let editIdNumber = 0;
 // let buttonCell = `<button onclick="markCompleted(this)"><span class="text-primary"><i class="fas fa-check-square"></i></span></button>&nbsp; 
 //     <i class="fas fa-edit"></i>&nbsp;
 //     <span class="text-danger"><i class="fas fa-trash-alt"></span></i>
@@ -26,7 +26,7 @@ function createTask() {
 
     // date is showing date - 1 day 
     if (dateField.value == '') {
-        date = new Date().toLocaleDateString();
+        date = new Date(tasks[editIdNumber].taskDate).toLocaleDateString();
     } else {
         date = new Date(date2).toLocaleDateString();
     }
@@ -122,7 +122,7 @@ function editTask(element) {
     let elementId = parseInt(element.getAttribute('data-string'))
     // get this object from button
     // open edit dialog
-    editIDNumber = elementId;
+    editIdNumber = elementId;
     // fill inputs with current data
     let editTask = document.getElementById('editTask');
     editTask.value = tasks[elementId].title;
@@ -162,9 +162,9 @@ function updateTask(){
             taskDate: date,
             created: createdDate,
             completed: false,
-            buttonCell: `<button class='btn' onclick="markCompleted(this)" data-string="${editIDNumber}"><span class="text-primary"><i class="fas fa-check-square"></i></span></button>&nbsp; 
-            <button class="btn" onclick="editTask(this)" data-string="${editIDNumber}"><i class="fas fa-edit"></i></button>&nbsp;
-            <button class='btn'  onclick="deleteTask(this)" data-string="${editIDNumber}"><span class="text-danger"><i class="fas fa-trash-alt"></span></i></button>
+            buttonCell: `<button class='btn' onclick="markCompleted(this)" data-string="${editIdNumber}"><span class="text-primary"><i class="fas fa-check-square"></i></span></button>&nbsp; 
+            <button class="btn" onclick="editTask(this)" data-string="${editIdNumber}"><i class="fas fa-edit"></i></button>&nbsp;
+            <button class='btn'  onclick="deleteTask(this)" data-string="${editIdNumber}"><span class="text-danger"><i class="fas fa-trash-alt"></span></i></button>
             `
         }
         // add to tasks 
@@ -205,7 +205,8 @@ function closeModal() {
     let modalBtn = document.getElementById('closeModalBtn');
     modalBtn.click();
 }
-function closeModal() {
+
+function closeEditModal() {
     // let modal = new bootstrap.Modal(document.getElementById('exampleModal'), {});
     // modal.hide();
 
