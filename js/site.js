@@ -146,7 +146,7 @@ function updateTask(){
 
     // date is showing date - 1 day 
     if (dateField.value == '') {
-        date = new Date().toLocaleDateString();
+        date = new Date(formatDate(tasks[editIdNumber].taskDate)).toLocaleDateString();
     } else {
         date = new Date(date2).toLocaleDateString();
     }
@@ -212,4 +212,18 @@ function closeEditModal() {
 
     let modalBtn = document.getElementById('closeEditModalBtn');
     modalBtn.click();
+}
+
+function formatDate(dateString){
+    let dateArray = dateString.split("/");
+    if (dateArray[0].length = 1) {
+        let value = dateArray[0];
+        dateArray[0] = `0${value}`;
+    }
+    if (dateArray[1].length = 1) {
+        let value = dateArray[1];
+        dateArray[1] = `0${value}`;
+    }
+
+    return `${dateArray[2]}-${dateArray[0]}-${dateArray[1]} 00:00`
 }
