@@ -121,13 +121,14 @@
               </div>
             </div>
           </div>
+          <p><button class="btn-outline-primary btn visually-hidden" data-bs-toggle="modal" data-bs-target="#editModal" id="openEditModal"></button></p>
 
            <!-- Modal -->
            <div class="modal fade" id="editModal" tabindex="-1" aria-labelledby="editModalLabel" aria-hidden="true">
             <div class="modal-dialog modal-dialog-centered">
               <div class="modal-content">
                 <div class="modal-header">
-                  <h5 class="modal-title" id="editModalLabel">Add Task</h5>
+                  <h5 class="modal-title" id="editModalLabel">Edit Task</h5>
                   <button type="button" class="btn-close" data-bs-dismiss="modal" id="closeEditModalBtn" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
@@ -197,7 +198,7 @@
     <script src="/js/site.js"></script>
     <script>
         document.getElementById("taskSave").addEventListener("click", createTask);
-        document.getElementById("editSave").addEventListener("click", updateTask);
+        document.getElementById("editSave").addEventListener("click", editTask);
         document.getElementById("taskClear").addEventListener("click", clearTasks);
         document.getElementById("menuClearTasks").addEventListener("click", clearTasks);
         window.onload = display();

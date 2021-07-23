@@ -41,9 +41,9 @@ function createTask() {
             taskDate: date,
             created: createdDate,
             completed: false,
-            buttonCell: `<button class='btn'id="${tasks.length}" onclick="markCompleted(this)" data-string="${tasks.length}"><span class="text-primary"><i class="fas fa-check-square"></i></span></button>&nbsp; 
-            <i class="fas fa-edit"></i>&nbsp;
-            <button class='btn' id="${tasks.length}" onclick="deleteTask(this)" data-string="${tasks.length}"><span class="text-danger"><i class="fas fa-trash-alt"></span></i></button>
+            buttonCell: `<button class='btn' onclick="markCompleted(this)" data-string="${tasks.length}"><span class="text-primary"><i class="fas fa-check-square"></i></span></button>&nbsp; 
+            <button class="btn" onclick="editTask(this)"><i class="fas fa-edit"></i></button>&nbsp;
+            <button class='btn'  onclick="deleteTask(this)" data-string="${tasks.length}"><span class="text-danger"><i class="fas fa-trash-alt"></span></i></button>
             `
         }
         // add to tasks 
@@ -117,12 +117,17 @@ function markCompleted(element) {
     display();
 }
 
-function editTask() {
+function editTask(element) {
     let elementId = parseInt(element.getAttribute('data-string'))
     // get this object from button
     // open edit dialog
+    let editModal = new bootstrap.Modal(document.getElementById('editModal'));
+    editModal.show();
     // fill inputs with current data
-
+    let editTask = document.getElementById('editTask');
+    editTask.value = tasks[elementId].task;
+    let editDate = document.getElementById('editDateDue');
+    editDate.value = tasks[elementId].taskDate;
     // if data is changed, change task
     // property
 
