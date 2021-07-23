@@ -42,7 +42,7 @@ function createTask() {
             created: createdDate,
             completed: false,
             buttonCell: `<button class='btn' onclick="markCompleted(this)" data-string="${tasks.length}"><span class="text-primary"><i class="fas fa-check-square"></i></span></button>&nbsp; 
-            <button class="btn" onclick="editTask(this)"><i class="fas fa-edit"></i></button>&nbsp;
+            <button class="btn" onclick="editTask(this)" data-string="${tasks.length}"><i class="fas fa-edit"></i></button>&nbsp;
             <button class='btn'  onclick="deleteTask(this)" data-string="${tasks.length}"><span class="text-danger"><i class="fas fa-trash-alt"></span></i></button>
             `
         }
@@ -121,16 +121,17 @@ function editTask(element) {
     let elementId = parseInt(element.getAttribute('data-string'))
     // get this object from button
     // open edit dialog
-    let editModal = new bootstrap.Modal(document.getElementById('editModal'));
-    editModal.show();
+    
     // fill inputs with current data
     let editTask = document.getElementById('editTask');
-    editTask.value = tasks[elementId].task;
+    editTask.value = tasks[elementId].title;
     let editDate = document.getElementById('editDateDue');
-    editDate.value = tasks[elementId].taskDate;
+    let newDate = tasks[elementId].taskDate
+    editDate.value = newDate;
     // if data is changed, change task
     // property
-
+    let editModal = new bootstrap.Modal(document.getElementById('editModal'));
+    editModal.show();
     // update screen
 }
 
@@ -142,9 +143,9 @@ function deleteTask(element) {
 
     // reset task indexes
     for (let i = elementId; i < tasks.length; i++) {
-        tasks[i].buttonCell = `<a id="${i}" onclick="markCompleted(this)" data-string="${i}"><span class="text-primary"><i class="fas fa-check-square"></i></span></a>&nbsp; 
-        <i class="fas fa-edit"></i>&nbsp;
-        <a id="${i}" onclick="deleteTask(this)" data-string="${i}"><span class="text-danger"><i class="fas fa-trash-alt"></span></i></button>
+        tasks[i].buttonCell = `<a  onclick="markCompleted(this)" data-string="${i}"><span class="text-primary"><i class="fas fa-check-square"></i></span></a>&nbsp; 
+        <button class="btn" onclick="editTask(this)" data-string="${i}"><i class="fas fa-edit"></i></button>&nbsp;
+        <a onclick="deleteTask(this)" data-string="${i}"><span class="text-danger"><i class="fas fa-trash-alt"></span></i></button>
         `
     }
 
