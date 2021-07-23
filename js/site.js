@@ -127,7 +127,7 @@ function editTask(element) {
     let editTask = document.getElementById('editTask');
     editTask.value = tasks[elementId].title;
     let editDateDue = document.getElementById('editDateDue');
-    editDateDue.value = formatDate(tasks[elementId].taskDate}
+    editDateDue.value = formatDate(tasks[elementId].taskDate);
     
     // if data is changed, change task
     // property
@@ -137,6 +137,7 @@ function editTask(element) {
 }
 
 function updateTask(){
+    
     // get user inputs
     let taskField = document.getElementById('editTask');
     let dateField = document.getElementById('editDateDue')
