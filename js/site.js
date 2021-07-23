@@ -125,14 +125,16 @@ function editTask(element) {
     // fill inputs with current data
     let editTask = document.getElementById('editTask');
     editTask.value = tasks[elementId].title;
-    let editDate = document.getElementById('editDateDue');
-    let newDate = tasks[elementId].taskDate
-    editDate.value = newDate;
+    
     // if data is changed, change task
     // property
     let editModal = new bootstrap.Modal(document.getElementById('editModal'));
     editModal.show();
     // update screen
+}
+
+function updateTask(){
+    
 }
 
 function deleteTask(element) {
