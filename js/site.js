@@ -126,6 +126,8 @@ function editTask(element) {
     // fill inputs with current data
     let editTask = document.getElementById('editTask');
     editTask.value = tasks[elementId].title;
+    let editDateDue = document.getElementById('editDateDue');
+    editDateDue.value = formatDate(tasks[elementId].taskDate}
     
     // if data is changed, change task
     // property
