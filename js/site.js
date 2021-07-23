@@ -190,6 +190,7 @@ function deleteTask(element) {
 
     // reset task indexes
     for (let i = elementId; i < tasks.length; i++) {
+        tasks[i].id = i;
         tasks[i].buttonCell = `<button class="btn"  onclick="markCompleted(this)" data-string="${i}"><span class="text-primary"><i class="fas fa-check-square"></i></span></button>&nbsp; 
         <button class="btn" onclick="editTask(this)" data-string="${i}"><i class="fas fa-edit"></i></button>&nbsp;
         <button class="btn" onclick="deleteTask(this)" data-string="${i}"><span class="text-danger"><i class="fas fa-trash-alt"></span></i></button>
@@ -231,3 +232,17 @@ function formatDate(dateString){
 
     return `${dateArray[2]}-${dateArray[0]}-${dateArray[1]} 00:00`
 }
+
+// (x => x.something  == value)
+
+// is the same as 
+// function findSomething (x) {
+//     let newArrayOfSomethings = [];
+
+//     for (let i = 0; i < x.length; i++) {
+//         if (x[i].something == something){
+//             newArrayOfSomethings.push(x[i]);
+//         }
+//     }
+//     return newArrayOfSomethings;
+// }
