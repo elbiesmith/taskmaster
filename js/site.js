@@ -1,5 +1,6 @@
 // create working task list
 let tasks = JSON.parse(localStorage.getItem('taskArray')) || [];
+let editIDNumber = 0;
 // let buttonCell = `<button onclick="markCompleted(this)"><span class="text-primary"><i class="fas fa-check-square"></i></span></button>&nbsp; 
 //     <i class="fas fa-edit"></i>&nbsp;
 //     <span class="text-danger"><i class="fas fa-trash-alt"></span></i>
@@ -121,7 +122,7 @@ function editTask(element) {
     let elementId = parseInt(element.getAttribute('data-string'))
     // get this object from button
     // open edit dialog
-    
+    editIDNumber = elementId;
     // fill inputs with current data
     let editTask = document.getElementById('editTask');
     editTask.value = tasks[elementId].title;
@@ -134,6 +135,46 @@ function editTask(element) {
 }
 
 function updateTask(){
+    // get user inputs
+    let taskField = document.getElementById('editTask');
+    let dateField = document.getElementById('editDateDue')
+    let task = taskField.value;
+    let createdDate = new Date().toLocaleDateString();
+    let date = new Date().toLocaleDateString();
+
+    let date2 = `${dateField.value} 00:00`
+
+    // date is showing date - 1 day 
+    if (dateField.value == '') {
+        date = new Date().toLocaleDateString();
+    } else {
+        date = new Date(date2).toLocaleDateString();
+    }
+
+
+    if (task == '') {
+        Swal.fire('Please enter a task');
+    } else {
+        // build task object
+        let taskObject = {
+            title: task,
+            id: tasks.length,
+            taskDate: date,
+            created: createdDate,
+            completed: false,
+            buttonCell: `<button class='btn' onclick="markCompleted(this)" data-string="${editIDNumber}"><span class="text-primary"><i class="fas fa-check-square"></i></span></button>&nbsp; 
+            <button class="btn" onclick="editTask(this)" data-string="${editIDNumber}"><i class="fas fa-edit"></i></button>&nbsp;
+            <button class='btn'  onclick="deleteTask(this)" data-string="${editIDNumber}"><span class="text-danger"><i class="fas fa-trash-alt"></span></i></button>
+            `
+        }
+        // add to tasks 
+        tasks[editIdNumber] = taskObject;
+        // update localStorage
+        localStorage.setItem('taskArray', JSON.stringify(tasks))
+    }
+
+    closeEditModal();
+    display();
     
 }
 
@@ -145,9 +186,9 @@ function deleteTask(element) {
 
     // reset task indexes
     for (let i = elementId; i < tasks.length; i++) {
-        tasks[i].buttonCell = `<a  onclick="markCompleted(this)" data-string="${i}"><span class="text-primary"><i class="fas fa-check-square"></i></span></a>&nbsp; 
+        tasks[i].buttonCell = `<button class="btn"  onclick="markCompleted(this)" data-string="${i}"><span class="text-primary"><i class="fas fa-check-square"></i></span></button>&nbsp; 
         <button class="btn" onclick="editTask(this)" data-string="${i}"><i class="fas fa-edit"></i></button>&nbsp;
-        <a onclick="deleteTask(this)" data-string="${i}"><span class="text-danger"><i class="fas fa-trash-alt"></span></i></button>
+        <button class="btn" onclick="deleteTask(this)" data-string="${i}"><span class="text-danger"><i class="fas fa-trash-alt"></span></i></button>
         `
     }
 
@@ -162,5 +203,12 @@ function closeModal() {
     // modal.hide();
 
     let modalBtn = document.getElementById('closeModalBtn');
+    modalBtn.click();
+}
+function closeModal() {
+    // let modal = new bootstrap.Modal(document.getElementById('exampleModal'), {});
+    // modal.hide();
+
+    let modalBtn = document.getElementById('closeEditModalBtn');
     modalBtn.click();
 }
