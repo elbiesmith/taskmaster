@@ -48,32 +48,56 @@
 
     <main class="flex-shrink-0">
         <div class="container">
-            <div class="row">
+            <div class="row mt-3">
+                <div class="col-8"><h2>Task Master</h2></div>
                 <div class="col">
-                    <h3 class="text-end">search area</h3>
+                    <h3 class="text-end">
+                        <form>
+                            <div class="input-group mb-3">
+                                <input type="text" class="form-control" placeholder="Search" aria-label="Search" id="searchBar" aria-describedby="basic-addon2">
+                                <span class="input-group-text" id="basic-addon2"><button class="btn" id="searchBtn">Search</button></span>
+                              </div>
+                        </form>
+                    </h3>
                 </div>
                 <hr>
             </div>
             <div class="row">
-                <div class="col-2 border-end">
-                    <p><button class="btn-outline-primary btn" data-bs-toggle="modal" data-bs-target="#exampleModal" id="menuCreateTask">Create Task</button></p>
-                    <p><button class="btn-outline-primary btn" id="menuClearTasks">Clear Tasks</button></p>
-                    <p>Filter Tasks</p>
+                <div class="col-2 border-end ">
+                    <div class="col d-grid gap-2">
+                    <button class="btn-outline-primary btn my-1" data-bs-toggle="modal" data-bs-target="#exampleModal" id="menuCreateTask">Create Task</button>
+                    </div>
+                    <div class="col d-grid gap-2 my-1">
+                    <button class="btn-outline-primary btn" id="menuClearTasks">Clear Tasks</button>
+                    </div>
+                    <div class="dropdown d-grid gap-2">
+                        <button class="btn btn-outline-primary dropdown-toggle" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
+                          Filter
+                        </button>
+                        <ul class="dropdown-menu text-center" aria-labelledby="dropdownMenuButton1">
+                          <li><a class="dropdown-item" id="displayAll">ALL</a><div class='dropdown-divider'></div></li>
+                          <li><a class="dropdown-item" id="filterIncomplete">Incomplete</a></li>
+                          <li><a class="dropdown-item" id="filterCompleted">Completed</a></li>
+                          <li><a class="dropdown-item" id="filterLate">Over Due</a></li>
+                        </ul>
+                      </div>
+                    <div class="col d-grid gap-2 my-1">
+                        <button class="btn btn-outline-primary" id='clearFilter'>clear filter</button>
+                    </div>
 
                 </div>
-                <div class="col-10">Task Master
+                <div class="col-10">
                     <div class="row">
-                        <div class="col">
-                            <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">create task</button>
+                        <div class="col d-grid gap-2">
+                            <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">Create Task</button>
                         </div>
-                        <div class="col">
-                            <button class="btn btn-primary" id="taskClear">clear tasks</button>
+                        <div class="col d-grid gap-2">
+                            <button class="btn btn-primary" id="taskClear">Clear Tasks</button>
                         </div>
-                        <div class="col">
-                            <button class="btn btn-primary">clear filter</button>
-                        </div>
+                        
                     </div>
                     <div class="row">
+                        <div class="col">
                         <table class="table table-striped mt-2">
                             <thead class="table-dark">
                                 <th>Title</th>
@@ -85,6 +109,7 @@
 
                             </tbody>
                         </table>
+                    </div>
                     </div>
                 </div>
             </div>
@@ -99,9 +124,9 @@
                   <button type="button" class="btn-close" data-bs-dismiss="modal" id="closeModalBtn" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <form id="newUserForm" class="needs-validation" novalidate>
+                    <form id="createForm" class="needs-validation" novalidate>
                         <div class="form-group">
-                            <label for="newUserName">Task</label>
+                            <label for="newTask">Task</label>
                             <input type="text" class="form-control" id="newTask" placeholder="task"
                                 value='' required>
                         </div>
@@ -132,7 +157,7 @@
                   <button type="button" class="btn-close" data-bs-dismiss="modal" id="closeEditModalBtn" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <form id="newUserForm" class="needs-validation" novalidate>
+                    <form id="editForm" class="needs-validation" novalidate>
                         <div class="form-group">
                             <label for="newUserName">Task</label>
                             <input type="text" class="form-control" id="editTask" placeholder="task"
@@ -179,7 +204,6 @@
                             class="fab fa-github text-match"></i></a>&emsp;
                     <a href="http://twitter.com/intrepidowlbear" target="_blank">
                         <i class="fab fa-twitter text-match"></i></a>
-
                 </div>
             </div>
         </div>
@@ -197,24 +221,7 @@
     <script src="/js/prism.js"></script>
     <script src="/js/site.js"></script>
     <script>
-        document.getElementById("taskSave").addEventListener("click", createTask);
-        document.getElementById("editSave").addEventListener("click", function (e) {
-            e.preventDefault();
-            updateTask();
-        });
-        document.getElementById("taskClear").addEventListener("click", clearTasks);
-        document.getElementById("menuClearTasks").addEventListener("click", clearTasks);
-        window.onload = display();
-        // document.getElementById("startValue").addEventListener('keypress', function (keyPressed) {
-        //     if (keyPressed.key === "Enter") {
-        //         getValues();
-        //     }
-        // })
-        // document.getElementById("endValue").addEventListener('keypress', function (keyPressed) {
-        //     if (keyPressed.key === "Enter") {
-        //         getValues();
-        //     }
-        // })
+        setupEventListeners();
     </script>
 
 </body>
