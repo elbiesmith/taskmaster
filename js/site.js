@@ -84,15 +84,22 @@ function clearTasks() {
     display();
 }
 
+function clearToolTip() {
+    $("div.tooltip").hide();
+    // let ttDiv = document.querySelector('.tooltip')
+    // ttDiv.hide();
+}
+
 function filter(task) {
     const template = document.getElementById('taskTemplate');
     const taskBody = document.getElementById('taskBody');
-
+    let filterHead = document.getElementById('filterData');
     taskBody.innerHTML = '';
 
     // sort tasks by filter
     if (task == 'all') {
         // display all
+        filterHead.innerHTML = `All Tasks(${workingData.length})`
         clearFilter();
     } else if (task == 'incomplete') {
         // loop and find completed == false
@@ -104,7 +111,7 @@ function filter(task) {
                 workingData.push(tasks[i]);
             }
         }
-
+        filterHead.innerHTML = `Incomplete Tasks(${workingData.length})`
         display();
 
     } else if (task == 'completed') {
@@ -117,10 +124,18 @@ function filter(task) {
                 workingData.push(tasks[i]);
             }
         }
-
+        filterHead.innerHTML = `Completed Tasks(${workingData.length})`
         display();
 
     } else if (task == 'late') {
+        workingData = [];
+        for (let i = 0; i < tasks.length; i++) {
+            if (Date.parse(generateModalDueDate(tasks[i].taskDate)) < new Date()) {
+                workingData.push(tasks[i]);
+            }
+        }
+        filterHead.innerHTML = `Over Due Tasks(${workingData.length})`
+        display();
 
     } else if (task == 'search') {
         let searchTerm = document.getElementById('searchBar').value;
@@ -131,14 +146,10 @@ function filter(task) {
                 workingData.push(tasks[i])
             }
         }
+        filterHead.innerHTML = `Search: ${searchTerm} (${workingData.length}) Found`
         display();
 
     }
-    // if theres a search term
-    // check if term is in task
-
-    // display screen using filtered items
-
 }
 
 function clearFilter() {
@@ -191,12 +202,11 @@ function markCompleted(element) {
         }
     }
 
-
-
     localStorage.setItem('taskArray', JSON.stringify(tasks));
     // change style to strikeout
     // added to display
     display();
+    clearToolTip()
 }
 
 function editTask(element) {
@@ -208,10 +218,10 @@ function editTask(element) {
     let editTask = document.getElementById('editTask');
     editTask.value = tasks[elementId].task;
     let editDateDue = document.getElementById('editDateDue');
-    
+
     editDateDue.value = generateModalDueDate(tasks[elementId].taskDate);
     // editDateDue.value = new Date(tasks[elementId].taskDate).toLocaleDateString();
-
+    clearToolTip();
     // if data is changed, change task
     // property
     let editModal = new bootstrap.Modal(document.getElementById('editModal'));
@@ -219,16 +229,16 @@ function editTask(element) {
     // update screen
 }
 
-function generateModalDueDate(date){
-    
+function generateModalDueDate(date) {
+
     let dateArray = date.split("/");
     let newDate = `${dateArray[2]}-`;
-    if (dateArray[0].length == 2){
+    if (dateArray[0].length == 2) {
         newDate += `${dateArray[0]}-`;
     } else {
         newDate += `0${dateArray[0]}-`
     }
-    if (dateArray[1].length == 2){
+    if (dateArray[1].length == 2) {
         newDate += `${dateArray[1]}`;
     } else {
         newDate += `0${dateArray[1]}`
@@ -273,7 +283,7 @@ function updateTask() {
         }
     }
 
-
+    clearToolTip();
 
     closeEditModal();
     display();
@@ -303,6 +313,7 @@ function deleteTask(element) {
         `
     }
 
+    clearToolTip();
     localStorage.setItem('taskArray', JSON.stringify(tasks));
     display();
 
@@ -354,7 +365,7 @@ function setupEventListeners() {
 
     document.getElementById("taskClear").addEventListener("click", clearTasks);
     document.getElementById("menuClearTasks").addEventListener("click", clearTasks);
-    window.onload = display();
+    window.onload = filter('all');
     document.getElementById("newTask").addEventListener('keypress', function (keyPressed) {
 
         if (keyPressed.key === "Enter") {
