@@ -71,3 +71,7 @@
         word-wrap: normal;
         white-space: pre;
       }
+
+      .btn-xsm{
+          padding: 0px;
+      }
