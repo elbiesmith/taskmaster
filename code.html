@@ -51,71 +51,393 @@
         <div class="container">
             <h1 class="border-bottom border-2">The Code</h1>
             <div class="row">
-                <div class="col">
+                <div class="col-8">
                     <pre class="line-numbers language-javascript">
                     <code class="language-javascript">
-                        function getValues() {
-                          // access the web page and get the values from the inputs
-                          let startValue = parseInt(document.getElementById("startValue").value);
-                          let endValue = parseInt(document.getElementById("endValue").value);
-                          let errorState = false;
-                          let errorMsg = "";
+                        let tasks = JSON.parse(localStorage.getItem('taskArray')) || [];
+                        let editIdNumber = 0;
+                        let workingData = tasks;
 
-                          // Verify that we have numbers
-                          if (isNaN(startValue) || isNaN(endValue)) {
-                              errorState = true;
-                              errorMsg += 'Please use a number.&lt;hr /&gt;';
-                          }
-
-                          if (startValue > endValue) {
-                              errorState = true;
-                              errorMsg += 'Please ensure that the start number is less than the end number.&lt;hr /&gt;';
-                          }
-
-                          if (startValue < -10000 || startValue> 10000 || endValue < -10000 || endValue> 10000) {
-                              errorState = true;
-                              errorMsg += 'To Save your processor, please use a range of less than 20,000&lt;hr/&gt;';
-                          }
-
-                          if (errorState) {
-                              Swal.fire({
-                                title: 'Something went wrong',
-                                html: `${errorMsg}`,
-                                type: 'error',
-                                confirmButtonText: 'OK',
-                                confirmButtonColor: '#68807A'
-                              })
-                          }
-
-                          // take the start and end values as teh bounds for a 'for' loop
-                          // that will create an array and return it.
-                          let numbers = generateNumbers(startValue, endValue);
-
-                          // take the array that was returned and pass it to a function that
-                          // will display it on the page.
-                          displayNumbers(numbers);
+                        function enableToolTips() {
+                            var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
+                            var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+                                return new bootstrap.Tooltip(tooltipTriggerEl)
+                            })
                         }
 
-                        function generateNumbers(startValue, endValue) {
-                          let numberArray = [];
-                          for (let i = startValue; i < endValue + 1; i++) {
-                              numberArray.push(i);
-                          }
-                          return numberArray; }
+                        function createTask() {
+                            let taskField = document.getElementById('newTask');
+                            let dateField = document.getElementById('newDateDue')
+                            let task = taskField.value;
+                            let createdDate = new Date().toLocaleDateString();
 
-                        function displayNumbers(numberArray) {
-                          let tableBody=document.getElementById("output");
-                          tableBody.innerHTML="" ;
-                          let className='even' ;
-                          for (let i=0; i < numberArray.length; i++) {
-                              if(numberArray[i] % 2===0) {
-                                  className='even';
-                              } else {
-                                   className='odd';
-                              }
+                            let date = dateField.value == "" ?
+                                new Date().toLocaleDateString() :
+                                new Date(`${dateField.value} 00:00`).toLocaleDateString();
 
-                              tableBody.innerHTML += `&lt;tr&gt;&lt;td class="${className}"&gt;${numberArray[i]}&lt;/td&gt;&lt;/tr&gt;`;
-                          }
+                            
+                            if (task == '') {
+                                Swal.fire('Please enter a task');
+                            } else {
+                                // build task object
+                                let taskObject = {
+                                    task: task,
+                                    id: tasks.length,
+                                    taskDate: date,
+                                    created: createdDate,
+                                    completed: false,
+                                    late: false,
+                                    buttonCell: `&lt;button class='btn' onclick="markCompleted(this)" data-string="${tasks.length}" data-bs-toggle="tooltip"  title="Mark Completed"&gt;&lt;span class="text-primary"&gt;&lt;i class="fas fa-check-square"&gt;&lt;/i&gt;&lt;/span&gt;&lt;/button&gt;&nbsp; 
+                                    &lt;button class="btn" onclick="editTask(this)" data-string="${tasks.length}" data-bs-toggle="tooltip"  title="Edit Task"&gt;&lt;i class="fas fa-edit"&gt;&lt;/i&gt;&lt;/button&gt;&nbsp;
+                                    &lt;button class='btn'  onclick="deleteTask(this)" data-string="${tasks.length}" data-bs-toggle="tooltip"  title="Delete Task"&gt;&lt;span class="text-danger"&gt;&lt;i class="fas fa-trash-alt"&gt;&lt;/span&gt;&lt;/i&gt;&lt;/button&gt;
+                                    `
+                                }
+                                // add to tasks 
+                                tasks.push(taskObject);
+                                // update localStorage
+                                localStorage.setItem('taskArray', JSON.stringify(tasks))
+                            }
+
+                            closeModal();
+                            display();
+                            clearForm('createForm');
+                        }
+
+                        function clearTasks() {
+                            // set tasks to []
+                            tasks = [];
+                            // update localStorage
+                            localStorage.setItem('taskArray', JSON.stringify(tasks));
+                            workingData = tasks;
+                            display();
+                        }
+
+                        function clearToolTip() {
+                            $("div.tooltip").hide();
+                            // let ttDiv = document.querySelector('.tooltip')
+                            // ttDiv.hide();
+                        }
+
+                        function filter(task) {
+                            const template = document.getElementById('taskTemplate');
+                            const taskBody = document.getElementById('taskBody');
+                            let filterHead = document.getElementById('filterData');
+                            taskBody.innerHTML = '';
+
+                            // sort tasks by filter
+                            if (task == 'all') {
+                                // display all
+                                filterHead.innerHTML = `All Tasks(${workingData.length})`
+                                clearFilter();
+                            } else if (task == 'incomplete') {
+                                // loop and find completed == false
+                                //display
+                                workingData = [];
+
+                                for (let i = 0; i &lt; tasks.length; i++) {
+                                    if (tasks[i].completed == false) {
+                                        workingData.push(tasks[i]);
+                                    }
+                                }
+                                filterHead.innerHTML = `Incomplete Tasks(${workingData.length})`
+                                display();
+
+                            } else if (task == 'completed') {
+                                // loop and find completed == true
+                                // display
+                                workingData = [];
+
+                                for (let i = 0; i &lt; tasks.length; i++) {
+                                    if (tasks[i].completed == true) {
+                                        workingData.push(tasks[i]);
+                                    }
+                                }
+                                filterHead.innerHTML = `Completed Tasks(${workingData.length})`
+                                display();
+
+                            } else if (task == 'late') {
+                                workingData = [];
+                                for (let i = 0; i &lt; tasks.length; i++) {
+                                    if (Date.parse(generateModalDueDate(tasks[i].taskDate)) &lt; new Date()) {
+                                        workingData.push(tasks[i]);
+                                    }
+                                }
+                                filterHead.innerHTML = `Over Due Tasks(${workingData.length})`
+                                display();
+
+                            } else if (task == 'search') {
+                                let searchTerm = document.getElementById('searchBar').value;
+                                workingData = [];
+
+                                for (let i = 0; i &lt; tasks.length; i++) {
+                                    if (tasks[i].task.includes(searchTerm)) {
+                                        workingData.push(tasks[i])
+                                    }
+                                }
+                                filterHead.innerHTML = `Search: ${searchTerm} (${workingData.length}) Found`
+                                display();
+
+                            }
+                        }
+
+                        function clearFilter() {
+                            workingData = tasks;
+                            display();
+                        }
+
+                        function display() {
+                            const template = document.getElementById('taskTemplate');
+                            const taskBody = document.getElementById('taskBody');
+                            // clear screen
+                            taskBody.innerHTML = '';
+                            // defaults to all
+                            for (let i = 0; i &lt; workingData.length; i++) {
+                                let taskRow = document.importNode(template.content, true);
+                                if (workingData[i].completed) {
+                                    taskRow.getElementById('task').innerHTML = `&lt;span class="text-decoration-line-through"&gt;${workingData[i].task}&lt;/span&gt;`;
+                                    taskRow.getElementById('created').innerHTML = `&lt;span class="text-decoration-line-through"&gt;${workingData[i].created}&lt;/span&gt;`;
+                                    taskRow.getElementById('dueDate').innerHTML = `&lt;span class="text-decoration-line-through"&gt;${workingData[i].taskDate}&lt;/span&gt;`;
+                                    taskRow.getElementById('buttons').innerHTML = `&lt;span&gt;${workingData[i].buttonCell}&lt;/span&gt;`;
+                                } else {
+
+                                    taskRow.getElementById('task').innerHTML = `&lt;span class="text-decoration-none"&gt;${workingData[i].task}&lt;/span&gt;`;
+                                    taskRow.getElementById('created').innerHTML = `&lt;span class="text-decoration-none"&gt;${workingData[i].created}&lt;/span&gt;`;
+                                    taskRow.getElementById('dueDate').innerHTML = `&lt;span class="text-decoration-lnone"&gt;${workingData[i].taskDate}&lt;/span&gt;`;
+                                    taskRow.getElementById('buttons').innerHTML = `&lt;span &gt;${workingData[i].buttonCell}&lt;/span&gt;`;
+                                }
+                                taskBody.appendChild(taskRow);
+                            }
+                            enableToolTips();
+                        }
+
+                        function markCompleted(element) {
+                            let elementId = parseInt(element.getAttribute('data-string'))
+                            // get this object from button
+                            // flip taskCompleted bool
+                            if (tasks[elementId].completed == true) {
+                                tasks[elementId].completed = false;
+                                for (let i = 0; i &lt; workingData.length; i++) {
+                                    if (workingData[i].id == elementId) {
+                                        workingData[i].compelted = false;
+                                    }
+                                }
+                            } else {
+                                tasks[elementId].completed = true;
+                                for (let i = 0; i &lt; workingData.length; i++) {
+                                    if (workingData[i].id == elementId) {
+                                        workingData[i].compelted = true;
+                                    }
+                                }
+                            }
+
+                            localStorage.setItem('taskArray', JSON.stringify(tasks));
+                            // change style to strikeout
+                            // added to display
+                            display();
+                            clearToolTip()
+                        }
+
+                        function editTask(element) {
+                            let elementId = parseInt(element.getAttribute('data-string'))
+                            // get this object from button
+                            // open edit dialog
+                            editIdNumber = elementId;
+                            // fill inputs with current data
+                            let editTask = document.getElementById('editTask');
+                            editTask.value = tasks[elementId].task;
+                            let editDateDue = document.getElementById('editDateDue');
+
+                            editDateDue.value = generateModalDueDate(tasks[elementId].taskDate);
+                            // editDateDue.value = new Date(tasks[elementId].taskDate).toLocaleDateString();
+                            clearToolTip();
+                            // if data is changed, change task
+                            // property
+                            let editModal = new bootstrap.Modal(document.getElementById('editModal'));
+                            editModal.show();
+                            // update screen
+                        }
+
+                        function generateModalDueDate(date) {
+
+                            let dateArray = date.split("/");
+                            let newDate = `${dateArray[2]}-`;
+                            if (dateArray[0].length == 2) {
+                                newDate += `${dateArray[0]}-`;
+                            } else {
+                                newDate += `0${dateArray[0]}-`
+                            }
+                            if (dateArray[1].length == 2) {
+                                newDate += `${dateArray[1]}`;
+                            } else {
+                                newDate += `0${dateArray[1]}`
+                            }
+
+                            return newDate;
+                        }
+
+                        function updateTask() {
+
+                            // get user inputs
+                            let taskField = document.getElementById('editTask');
+                            let dateField = document.getElementById('editDateDue')
+                            let task = taskField.value;
+                            let createdDate = new Date().toLocaleDateString();
+                            let completed = tasks[editIdNumber].completed;
+                            let date = new Date(`${dateField.value} 00:00`).toLocaleDateString();
+
+                            if (task == '') {
+                                Swal.fire('Please enter a task');
+                            } else {
+                                // build task object
+                                let taskObject = {
+                                    task: task,
+                                    id: editIdNumber,
+                                    taskDate: date,
+                                    created: createdDate,
+                                    completed: completed,
+                                    buttonCell: `&lt;button class='btn' onclick="markCompleted(this)" data-string="${editIdNumber}"&gt;&lt;span class="text-primary"&gt;&lt;i class="fas fa-check-square"&gt;&lt;/i&gt;&lt;/span&gt;&lt;/button&gt;&nbsp; 
+                                    &lt;button class="btn" onclick="editTask(this)" data-string="${editIdNumber}"&gt;&lt;i class="fas fa-edit"&gt;&lt;/i&gt;&lt;/button&gt;&nbsp;
+                                    &lt;button class='btn'  onclick="deleteTask(this)" data-string="${editIdNumber}"&gt;&lt;span class="text-danger"&gt;&lt;i class="fas fa-trash-alt"&gt;&lt;/span&gt;&lt;/i&gt;&lt;/button&gt;
+                                    `
+                                }
+                                // add to tasks 
+                                tasks[editIdNumber] = taskObject;
+                                // update localStorage
+                                localStorage.setItem('taskArray', JSON.stringify(tasks))
+                                for (let i = 0; i &lt; workingData.length; i++) {
+                                    if (workingData[i].id == taskObject.id) {
+                                        workingData[i].task = task;
+                                    }
+                                }
+                            }
+
+                            clearToolTip();
+
+                            closeEditModal();
+                            display();
+                            clearForm('editForm');
+
+                        }
+
+                        function deleteTask(element) {
+                            // get index of this object from button
+                            // array.splice(index, 1) to remove
+                            let elementId = parseInt(element.getAttribute('data-string'))
+                            tasks.splice(elementId, 1);
+
+                            for (let i = 0; i &lt; workingData.length; i++) {
+                                if (workingData[i].id == elementId) {
+                                    workingData.splice(i, 1);
+                                }
+                            }
+
+
+                            // reset task indexes
+                            for (let i = elementId; i &lt; tasks.length; i++) {
+                                tasks[i].id = i;
+                                tasks[i].buttonCell = `&lt;button class="btn"  onclick="markCompleted(this)" data-string="${i}" data-bs-toggle="tooltip"  title="Mark Completed"&gt;&lt;span class="text-primary"&gt;&lt;i class="fas fa-check-square"&gt;&lt;/i&gt;&lt;/span&gt;&lt;/button&gt;&nbsp; 
+                                &lt;button class="btn" onclick="editTask(this)" data-string="${i}" data-bs-toggle="tooltip"  title="Edit Task"&gt;&lt;i class="fas fa-edit"&gt;&lt;/i&gt;&lt;/button&gt;&nbsp;
+                                &lt;button class="btn" onclick="deleteTask(this)" data-string="${i}" data-bs-toggle="tooltip"  title="Delete Task"&gt;&lt;span class="text-danger"&gt;&lt;i class="fas fa-trash-alt"&gt;&lt;/span&gt;&lt;/i&gt;&lt;/button&gt;
+                                `
+                            }
+
+                            clearToolTip();
+                            localStorage.setItem('taskArray', JSON.stringify(tasks));
+                            display();
+
+
+                        }
+
+                        function closeModal() {
+                            // let modal = new bootstrap.Modal(document.getElementById('exampleModal'), {});
+                            // modal.hide();
+
+                            let modalBtn = document.getElementById('closeModalBtn');
+                            modalBtn.click();
+                        }
+
+                        function closeEditModal() {
+                            // let modal = new bootstrap.Modal(document.getElementById('exampleModal'), {});
+                            // modal.hide();
+
+                            let modalBtn = document.getElementById('closeEditModalBtn');
+                            modalBtn.click();
+                        }
+
+                        function formatDate(dateString) {
+                            let dateArray = dateString.split("/");
+                            if (dateArray[0].length = 1) {
+                                let value = dateArray[0];
+                                dateArray[0] = `0${value}`;
+                            }
+                            if (dateArray[1].length = 1) {
+                                let value = dateArray[1];
+                                dateArray[1] = `0${value}`;
+                            }
+
+                            return `${dateArray[2]}-${dateArray[0]}-${dateArray[1]} 00:00`
+                        }
+
+                        function clearForm(form) {
+                            document.getElementById(form).reset();
+                        }
+
+                        function setupEventListeners() {
+                            document.getElementById("taskSave").addEventListener("click", createTask);
+                            document.getElementById("clearFilter").addEventListener("click", clearFilter);
+                            document.getElementById("editSave").addEventListener("click", function (e) {
+                                e.preventDefault();
+                                updateTask();
+                            });
+
+
+                            document.getElementById("taskClear").addEventListener("click", clearTasks);
+                            document.getElementById("menuClearTasks").addEventListener("click", clearTasks);
+                            window.onload = filter('all');
+                            document.getElementById("newTask").addEventListener('keypress', function (keyPressed) {
+
+                                if (keyPressed.key === "Enter") {
+                                    keyPressed.preventDefault();
+                                    createTask();
+
+                                }
+                            })
+                            document.getElementById("newDateDue").addEventListener('keypress', function (keyPressed) {
+                                if (keyPressed.key === "Enter") {
+                                    keyPressed.preventDefault();
+                                    createTask();
+                                }
+                            });
+                            document.getElementById("editTask").addEventListener('keypress', function (keyPressed) {
+                                if (keyPressed.key === "Enter") {
+                                    keyPressed.preventDefault();
+                                    updateTask();
+                                }
+                            });
+                            document.getElementById("editDateDue").addEventListener('keypress', function (keyPressed) {
+                                if (keyPressed.key === "Enter") {
+                                    keyPressed.preventDefault();
+                                    updateTask();
+                                }
+                            });
+                            document.getElementById("searchBtn").addEventListener("click", (e) =&gt; {
+                                e.preventDefault();
+                                filter('search');
+                            });
+                            document.getElementById("displayAll").addEventListener("click", () =&gt; {
+                                filter('all');
+                            });
+                            document.getElementById("filterIncomplete").addEventListener("click", () =&gt; {
+                                filter('incomplete');
+                            });
+                            document.getElementById("filterCompleted").addEventListener("click", () =&gt; {
+                                filter('completed');
+                            });
+                            document.getElementById("filterLate").addEventListener("click", () =&gt; {
+                                filter('late');
+                            });
+
+
                         }
                     </code>
                     </pre>
