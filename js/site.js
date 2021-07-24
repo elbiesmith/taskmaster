@@ -2,6 +2,7 @@
 let tasks = JSON.parse(localStorage.getItem('taskArray')) || [];
 let editIdNumber = 0;
 let workingData = tasks;
+
 // let buttonCell = `<button onclick="markCompleted(this)"><span class="text-primary"><i class="fas fa-check-square"></i></span></button>&nbsp; 
 //     <i class="fas fa-edit"></i>&nbsp;
 //     <span class="text-danger"><i class="fas fa-trash-alt"></span></i>
@@ -15,22 +16,36 @@ let workingData = tasks;
 //     completed: bool
 // }
 
+function enableToolTips() {
+    var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
+    var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+        return new bootstrap.Tooltip(tooltipTriggerEl)
+    })
+}
+
 function createTask() {
     // get user inputs
     let taskField = document.getElementById('newTask');
     let dateField = document.getElementById('newDateDue')
     let task = taskField.value;
     let createdDate = new Date().toLocaleDateString();
-    let date = new Date().toLocaleDateString();
 
-    let date2 = `${dateField.value} 00:00`
+    // ternary ? operater is basically an if statement. test if this is true or false
+    // if its empty send in todays date. if its not empty send its value.
+    let date = dateField.value == "" ?
+        new Date().toLocaleDateString() :
+        new Date(`${dateField.value} 00:00`).toLocaleDateString();
 
-    // date is showing date - 1 day 
-    if (dateField.value == '') {
-        date = new Date().toLocaleDateString();
-    } else {
-        date = new Date(date2).toLocaleDateString();
-    }
+    // let date = new Date().toLocaleDateString();
+
+    // let date2 = `${dateField.value} 00:00`
+
+    // 
+    // if (dateField.value == '') {
+    //     date = new Date().toLocaleDateString();
+    // } else {
+    //     date = new Date(date2).toLocaleDateString();
+    // }
 
 
     if (task == '') {
@@ -44,9 +59,9 @@ function createTask() {
             created: createdDate,
             completed: false,
             late: false,
-            buttonCell: `<button class='btn' onclick="markCompleted(this)" data-string="${tasks.length}"><span class="text-primary"><i class="fas fa-check-square"></i></span></button>&nbsp; 
-            <button class="btn" onclick="editTask(this)" data-string="${tasks.length}"><i class="fas fa-edit"></i></button>&nbsp;
-            <button class='btn'  onclick="deleteTask(this)" data-string="${tasks.length}"><span class="text-danger"><i class="fas fa-trash-alt"></span></i></button>
+            buttonCell: `<button class='btn' onclick="markCompleted(this)" data-string="${tasks.length}" data-bs-toggle="tooltip"  title="Mark Completed"><span class="text-primary"><i class="fas fa-check-square"></i></span></button>&nbsp; 
+            <button class="btn" onclick="editTask(this)" data-string="${tasks.length}" data-bs-toggle="tooltip"  title="Edit Task"><i class="fas fa-edit"></i></button>&nbsp;
+            <button class='btn'  onclick="deleteTask(this)" data-string="${tasks.length}" data-bs-toggle="tooltip"  title="Delete Task"><span class="text-danger"><i class="fas fa-trash-alt"></span></i></button>
             `
         }
         // add to tasks 
@@ -74,9 +89,9 @@ function filter(task) {
     const taskBody = document.getElementById('taskBody');
 
     taskBody.innerHTML = '';
-    
+
     // sort tasks by filter
-    if(task == 'all'){
+    if (task == 'all') {
         // display all
         clearFilter();
     } else if (task == 'incomplete') {
@@ -84,8 +99,8 @@ function filter(task) {
         //display
         workingData = [];
 
-        for( let i = 0; i < tasks.length; i++){
-            if(tasks[i].completed == false){
+        for (let i = 0; i < tasks.length; i++) {
+            if (tasks[i].completed == false) {
                 workingData.push(tasks[i]);
             }
         }
@@ -97,15 +112,26 @@ function filter(task) {
         // display
         workingData = [];
 
-        for( let i = 0; i < tasks.length; i++){
-            if(tasks[i].completed == true){
+        for (let i = 0; i < tasks.length; i++) {
+            if (tasks[i].completed == true) {
                 workingData.push(tasks[i]);
             }
         }
 
         display();
 
-    } else if (task == 'late')  {
+    } else if (task == 'late') {
+
+    } else if (task == 'search') {
+        let searchTerm = document.getElementById('searchBar').value;
+        workingData = [];
+
+        for (let i = 0; i < tasks.length; i++) {
+            if (tasks[i].task.includes(searchTerm)) {
+                workingData.push(tasks[i])
+            }
+        }
+        display();
 
     }
     // if theres a search term
@@ -115,7 +141,7 @@ function filter(task) {
 
 }
 
-function clearFilter(){
+function clearFilter() {
     workingData = tasks;
     display();
 }
@@ -134,7 +160,7 @@ function display() {
             taskRow.getElementById('dueDate').innerHTML = `<span class="text-decoration-line-through">${workingData[i].taskDate}</span>`;
             taskRow.getElementById('buttons').innerHTML = `<span>${workingData[i].buttonCell}</span>`;
         } else {
-            
+
             taskRow.getElementById('task').innerHTML = `<span class="text-decoration-none">${workingData[i].task}</span>`;
             taskRow.getElementById('created').innerHTML = `<span class="text-decoration-none">${workingData[i].created}</span>`;
             taskRow.getElementById('dueDate').innerHTML = `<span class="text-decoration-lnone">${workingData[i].taskDate}</span>`;
@@ -142,7 +168,7 @@ function display() {
         }
         taskBody.appendChild(taskRow);
     }
-
+    enableToolTips();
 }
 
 function markCompleted(element) {
@@ -151,22 +177,22 @@ function markCompleted(element) {
     // flip taskCompleted bool
     if (tasks[elementId].completed == true) {
         tasks[elementId].completed = false;
-        for(let i = 0; i<workingData.length; i++){
-            if (workingData[i].id == elementId){
+        for (let i = 0; i < workingData.length; i++) {
+            if (workingData[i].id == elementId) {
                 workingData[i].compelted = false;
             }
         }
     } else {
         tasks[elementId].completed = true;
-        for(let i = 0; i<workingData.length; i++){
-            if (workingData[i].id == elementId){
+        for (let i = 0; i < workingData.length; i++) {
+            if (workingData[i].id == elementId) {
                 workingData[i].compelted = true;
             }
         }
     }
 
-    
-    
+
+
     localStorage.setItem('taskArray', JSON.stringify(tasks));
     // change style to strikeout
     // added to display
@@ -182,8 +208,10 @@ function editTask(element) {
     let editTask = document.getElementById('editTask');
     editTask.value = tasks[elementId].task;
     let editDateDue = document.getElementById('editDateDue');
-    editDateDue.value = formatDate(tasks[elementId].taskDate);
     
+    editDateDue.value = generateModalDueDate(tasks[elementId].taskDate);
+    // editDateDue.value = new Date(tasks[elementId].taskDate).toLocaleDateString();
+
     // if data is changed, change task
     // property
     let editModal = new bootstrap.Modal(document.getElementById('editModal'));
@@ -191,25 +219,33 @@ function editTask(element) {
     // update screen
 }
 
-function updateTask(){
+function generateModalDueDate(date){
     
+    let dateArray = date.split("/");
+    let newDate = `${dateArray[2]}-`;
+    if (dateArray[0].length == 2){
+        newDate += `${dateArray[0]}-`;
+    } else {
+        newDate += `0${dateArray[0]}-`
+    }
+    if (dateArray[1].length == 2){
+        newDate += `${dateArray[1]}`;
+    } else {
+        newDate += `0${dateArray[1]}`
+    }
+
+    return newDate;
+}
+
+function updateTask() {
+
     // get user inputs
     let taskField = document.getElementById('editTask');
     let dateField = document.getElementById('editDateDue')
     let task = taskField.value;
     let createdDate = new Date().toLocaleDateString();
-    let date = new Date().toLocaleDateString();
     let completed = tasks[editIdNumber].completed;
-
-    let date2 = `${dateField.value} 00:00`
-
-    // date is showing date - 1 day 
-    if (dateField.value == '') {
-        date = new Date(formatDate(tasks[editIdNumber].taskDate)).toLocaleDateString();
-    } else {
-        date = new Date(date2).toLocaleDateString();
-    }
-
+    let date = new Date(`${dateField.value} 00:00`).toLocaleDateString();
 
     if (task == '') {
         Swal.fire('Please enter a task');
@@ -217,7 +253,7 @@ function updateTask(){
         // build task object
         let taskObject = {
             task: task,
-            id: tasks.length,
+            id: editIdNumber,
             taskDate: date,
             created: createdDate,
             completed: completed,
@@ -230,19 +266,19 @@ function updateTask(){
         tasks[editIdNumber] = taskObject;
         // update localStorage
         localStorage.setItem('taskArray', JSON.stringify(tasks))
-        for (let i = 0; i<workingData.length;i++){
-            if(workingData[i].id == taskObject.id){
+        for (let i = 0; i < workingData.length; i++) {
+            if (workingData[i].id == taskObject.id) {
                 workingData[i].task = task;
             }
         }
     }
 
 
-    
+
     closeEditModal();
     display();
     clearForm('editForm');
-    
+
 }
 
 function deleteTask(element) {
@@ -250,9 +286,9 @@ function deleteTask(element) {
     // array.splice(index, 1) to remove
     let elementId = parseInt(element.getAttribute('data-string'))
     tasks.splice(elementId, 1);
-    
-    for (let i = 0; i < workingData.length;i++){
-        if (workingData[i].id == elementId){
+
+    for (let i = 0; i < workingData.length; i++) {
+        if (workingData[i].id == elementId) {
             workingData.splice(i, 1);
         }
     }
@@ -261,9 +297,9 @@ function deleteTask(element) {
     // reset task indexes
     for (let i = elementId; i < tasks.length; i++) {
         tasks[i].id = i;
-        tasks[i].buttonCell = `<button class="btn"  onclick="markCompleted(this)" data-string="${i}"><span class="text-primary"><i class="fas fa-check-square"></i></span></button>&nbsp; 
-        <button class="btn" onclick="editTask(this)" data-string="${i}"><i class="fas fa-edit"></i></button>&nbsp;
-        <button class="btn" onclick="deleteTask(this)" data-string="${i}"><span class="text-danger"><i class="fas fa-trash-alt"></span></i></button>
+        tasks[i].buttonCell = `<button class="btn"  onclick="markCompleted(this)" data-string="${i}" data-bs-toggle="tooltip"  title="Mark Completed"><span class="text-primary"><i class="fas fa-check-square"></i></span></button>&nbsp; 
+        <button class="btn" onclick="editTask(this)" data-string="${i}" data-bs-toggle="tooltip"  title="Edit Task"><i class="fas fa-edit"></i></button>&nbsp;
+        <button class="btn" onclick="deleteTask(this)" data-string="${i}" data-bs-toggle="tooltip"  title="Delete Task"><span class="text-danger"><i class="fas fa-trash-alt"></span></i></button>
         `
     }
 
@@ -289,7 +325,7 @@ function closeEditModal() {
     modalBtn.click();
 }
 
-function formatDate(dateString){
+function formatDate(dateString) {
     let dateArray = dateString.split("/");
     if (dateArray[0].length = 1) {
         let value = dateArray[0];
@@ -303,7 +339,7 @@ function formatDate(dateString){
     return `${dateArray[2]}-${dateArray[0]}-${dateArray[1]} 00:00`
 }
 
-function clearForm(form){
+function clearForm(form) {
     document.getElementById(form).reset();
 }
 
@@ -314,17 +350,17 @@ function setupEventListeners() {
         e.preventDefault();
         updateTask();
     });
-    
-    document.getElementById("searchBtn").addEventListener("click", search)
+
+
     document.getElementById("taskClear").addEventListener("click", clearTasks);
     document.getElementById("menuClearTasks").addEventListener("click", clearTasks);
     window.onload = display();
     document.getElementById("newTask").addEventListener('keypress', function (keyPressed) {
-            
+
         if (keyPressed.key === "Enter") {
             keyPressed.preventDefault();
             createTask();
-                
+
         }
     })
     document.getElementById("newDateDue").addEventListener('keypress', function (keyPressed) {
@@ -345,6 +381,10 @@ function setupEventListeners() {
             updateTask();
         }
     });
+    document.getElementById("searchBtn").addEventListener("click", (e) => {
+        e.preventDefault();
+        filter('search');
+    });
     document.getElementById("displayAll").addEventListener("click", () => {
         filter('all');
     });
@@ -358,20 +398,11 @@ function setupEventListeners() {
         filter('late');
     });
 
-    
+
 }
 
 
-function search() {
-    let searchTerm = document.getElementById('searchBar').value;
-    workingData = [];
-    for(let i = 0; i < tasks.length; i++){
-        if(tasks[i].task.includes(searchTerm)){
-            workingData.push(tasks[i])
-        }
-    }
-    display();
-}
+
 // (x => x.something  == value)
 
 // is the same as 
