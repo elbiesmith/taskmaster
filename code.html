@@ -454,22 +454,23 @@
                                 if its late, and a dynamic button group filled with our completion, edit and 
                                 delete butttons.  I assign them a data-string containing the user id so that
                                 when I want to edit a specific item, the button knows which item to work with.
-                            </p>
+                            </p><hr>
                             <p>clearTasks() simply clears the local storage and redisplays the screen</p>
+                            <hr>
                             <p>filter(task) takes in a type of task and filters the display to match. It 
                                 rebuilds our workingData with a subset of the full local storage.
-                            </p>
+                            </p><hr>
                             <p>
                                 display() takes our new workingData array and displays it on the screen
-                            </p>
+                            </p><hr>
                             <p>
                                 markCompleted() swaps the boolean value in our task array. It uses the id
                                 number passed to it from the button to know which row to mark. display()
                                 handles the actual styling.
-                            </p>
+                            </p><hr>
                             <p>updateTask() and deleteTask() both use the same strategy for handling ids
                                 and rows.
-                            </p>
+                            </p><hr>
                             <p>The other functions are helper functions used for formatting dates, 
                                 opening/closing modals and setting up event listeners.
                             </p>
