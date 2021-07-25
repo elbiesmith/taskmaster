@@ -1,19 +1,4 @@
 # Task Master
+A Task List coding Challenge 
 
-
-Features to implement
-Search for task
-filter task by category
-
-Known Bugs
-Date does not autofill on edit
-
-
-Implemented Features
-Create Task
-Save tasklist to local storage
-clear all tasks
-Mark task complete
-edit existing task
-delete specific task
- 
+![image](https://github.com/elbiesmith/taskmaster/blob/main/img/TaskMaster.jpg)
