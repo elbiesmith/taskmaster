@@ -2,7 +2,7 @@
 let tasks = JSON.parse(localStorage.getItem('taskArray')) || [];
 let editIdNumber = 0;
 let workingData = tasks;
-
+let currentFilter = 'all';
 // let buttonCell = `<button onclick="markCompleted(this)"><span class="text-primary"><i class="fas fa-check-square"></i></span></button>&nbsp; 
 //     <i class="fas fa-edit"></i>&nbsp;
 //     <span class="text-danger"><i class="fas fa-trash-alt"></span></i>
@@ -71,6 +71,7 @@ function createTask() {
     }
 
     closeModal();
+    filter(currentFilter);
     display();
     clearForm('createForm');
 }
@@ -99,11 +100,13 @@ function filter(task) {
     // sort tasks by filter
     if (task == 'all') {
         // display all
-        filterHead.innerHTML = `All Tasks(${workingData.length})`
+        currentFilter = 'all';
         clearFilter();
+        filterHead.innerHTML = `All Tasks(${workingData.length})`
     } else if (task == 'incomplete') {
         // loop and find completed == false
         //display
+        currentFilter = 'incomplete';
         workingData = [];
 
         for (let i = 0; i < tasks.length; i++) {
@@ -117,6 +120,7 @@ function filter(task) {
     } else if (task == 'completed') {
         // loop and find completed == true
         // display
+        currentFilter = 'completed';
         workingData = [];
 
         for (let i = 0; i < tasks.length; i++) {
@@ -129,6 +133,7 @@ function filter(task) {
 
     } else if (task == 'late') {
         workingData = [];
+        currentFilter = 'late';
         for (let i = 0; i < tasks.length; i++) {
             if (Date.parse(generateModalDueDate(tasks[i].taskDate)) < new Date()) {
                 workingData.push(tasks[i]);
@@ -140,6 +145,7 @@ function filter(task) {
     } else if (task == 'search') {
         let searchTerm = document.getElementById('searchBar').value;
         workingData = [];
+        currentFilter = 'search'
 
         for (let i = 0; i < tasks.length; i++) {
             if (tasks[i].task.includes(searchTerm)) {
@@ -315,7 +321,7 @@ function deleteTask(element) {
 
     clearToolTip();
     localStorage.setItem('taskArray', JSON.stringify(tasks));
-    display();
+    filter(currentFilter);
 
 
 }
@@ -338,6 +344,8 @@ function closeEditModal() {
 
 function formatDate(dateString) {
     let dateArray = dateString.split("/");
+
+    
     if (dateArray[0].length = 1) {
         let value = dateArray[0];
         dateArray[0] = `0${value}`;
